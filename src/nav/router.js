@@ -1,16 +1,15 @@
 import React from "react";
-
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 const AuthStack = createStackNavigator();
 const MainTab = createBottomTabNavigator();
 
-import RegistrationScreen from "./screens/auth/RegistrationScreen";
-import LoginScreen from "./screens/auth/LoginScreen";
-import PostsScreen from "./screens/main/PostsScreen";
-import CreatePostsScreen from "./screens/main/CreatePostsScreen";
-import ProfileScreen from "./screens/main/ProfileScreen";
+import RegistrationScreen from "../screens/auth/RegistrationScreen";
+import LoginScreen from "../screens/auth/LoginScreen";
+import PostsScreen from "../screens/main/PostsScreen";
+import CreatePostsScreen from "../screens/main/CreatePostsScreen";
+import ProfileScreen from "../screens/main/ProfileScreen";
 
 // icons import
 import { MaterialCommunityIcons } from "@expo/vector-icons";

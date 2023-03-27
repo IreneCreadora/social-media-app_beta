@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useFonts } from "expo-font";
+import { authSignUpUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -11,55 +13,60 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
-  Alert,
 } from "react-native";
 
 const initialState = {
+  name: "",
   email: "",
   password: "",
 };
 
-export default function LoginScreen({ navigation }) {
-  console.log(navigation);
-  console.log(Platform.OS);
+export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setstate] = useState(initialState);
+  const dispatch = useDispatch();
 
-  const keyboardHide = () => {
+  const handleSubmit = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    console.log(state);
-    setstate(initialState);
-  };
 
-  const onSubmit = () => {
-    if (!state.email || !state.password) {
-      return Alert.alert("Error", "Please, enter name, email and  password");
-    }
-    console.log(state);
-    keyboardHide();
+    dispatch(authSignUpUser(state));
+    console.log(`in register ${state.name} ${state.email}`);
     setstate(initialState);
   };
   const [fontsLoaded] = useFonts({
-    "EastSeaDokdo-Regular": require("../../assets/fonts/EastSeaDokdo-Regular.ttf"),
-    "Roboto-Italic": require("../../assets/fonts/Roboto-Italic.ttf"),
+    "EastSeaDokdo-Regular": require("../../../assets/fonts/EastSeaDokdo-Regular.ttf"),
+    "Roboto-Italic": require("../../../assets/fonts/Roboto-Italic.ttf"),
   });
 
   if (!fontsLoaded) {
     return null;
   }
+
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback onPress={handleSubmit}>
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
-          source={require("../../assets/images/background.jpg")}
+          source={require("../../../assets/images/background.jpg")}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : ""}
           >
             <View style={styles.frame}>
-              <Text style={styles.headerTitle}>Log in</Text>
+              <Text style={styles.headerTitle}>Sign up</Text>
+              <View style={styles.inputField}>
+                <TextInput
+                  style={styles.input}
+                  textAlign={"left"}
+                  placeholder={"Name"}
+                  onFocus={() => setIsShowKeyboard(true)}
+                  value={state.name}
+                  onChangeText={(value) =>
+                    setstate((prevState) => ({ ...prevState, name: value }))
+                  }
+                />
+              </View>
               <View style={styles.inputField}>
                 <TextInput
                   style={styles.input}
@@ -76,31 +83,29 @@ export default function LoginScreen({ navigation }) {
                 <TextInput
                   style={styles.input}
                   textAlign={"left"}
-                  placeholder={"Password"}
+                  plnpx
+                  expo
+                  install
+                  react-native-screens
+                  react-native-safe-area-contextaceholder={"Password"}
                   secureTextEntry={true}
+                  placeholder={"Password"}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.password}
                   onChangeText={(value) =>
-                    setstate((prevState) => ({
-                      ...prevState,
-                      password: value,
-                    }))
+                    setstate((prevState) => ({ ...prevState, password: value }))
                   }
                 />
               </View>
               <TouchableOpacity
                 activeOpacity={0.7}
                 style={styles.btn}
-                onPress={() => onSubmit()}
+                onPress={handleSubmit}
               >
-                <Text style={styles.btnTitle}>Log in</Text>
+                <Text style={styles.btnTitle}>Sign up</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Registration")}
-              >
-                <Text style={styles.titleLink}>
-                  Don't have an account? Sign up!
-                </Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <Text style={styles.titleLink}>Have an account? Log in!</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
@@ -121,6 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   frame: {
+    justifyContent: "center",
     paddingTop: 32,
     paddingHorizontal: 10,
     backgroundColor: "#FFFFFF",
