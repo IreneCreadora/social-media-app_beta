@@ -24,6 +24,7 @@ const initialState = {
 export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setstate] = useState(initialState);
+  const { login, email, password } = state;
   const dispatch = useDispatch();
 
   const handleSubmit = () => {

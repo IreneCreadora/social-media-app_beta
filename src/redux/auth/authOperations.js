@@ -1,32 +1,48 @@
-import { auth } from "../../firebase/config";
+import { authFirebase } from "../../firebase/config";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
+import Toast from "react-native-root-toast";
 import { authSlice } from "./authReducer";
 
-const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
+const { authSignOut, updateUserProfile, authStateChange } = authSlice.actions;
 
 export const authSignUpUser =
   ({ email, password, name }) =>
   async (dispatch, getState) => {
     try {
-      await auth.createUserWithEmailAndPassword(email, password);
-      console.log(`in operations ${email}`);
+      const response = await createUserWithEmailAndPassword(
+        authFirebase,
+        email,
+        password
+      );
 
-      const user = await auth.currentUser;
+      const user = response.user;
 
-      await user.updateProfile({
-        displayName: name,
+      Toast.show("Registration successful", {
+        duration: 3000,
+        position: 50,
       });
 
-      const { displayName, uid } = await auth.currentUser;
+      await updateProfile(authFirebase.currentUser, {
+        displayName: name,
+        userId: user.uid,
+      });
+
+      const { displayName, uid } = await authFirebase.currentUser;
+      console.log("register", displayName, uid);
 
       const userUpdateProfile = {
-        nickName: displayName,
+        userName: displayName,
         userId: uid,
       };
 
       dispatch(updateUserProfile(userUpdateProfile));
     } catch (error) {
-      console.log("error", error);
-
       console.log("error.message", error.message);
     }
   };
@@ -35,8 +51,16 @@ export const authSignInUser =
   ({ email, password }) =>
   async (dispatch, getState) => {
     try {
-      const user = await auth.signInWithEmailAndPassword(email, password);
-      console.log("user", user);
+      const user = await signInWithEmailAndPassword(
+        authFirebase,
+        email,
+        password
+      );
+
+      Toast.show(`Welcome`, {
+        duration: 3000,
+        position: 50,
+      });
     } catch (error) {
       console.log("error", error);
       console.log("error.code", error.code);
@@ -45,15 +69,24 @@ export const authSignInUser =
   };
 
 export const authSignOutUser = () => async (dispatch, getState) => {
-  await auth.signOut();
-  dispatch(authSignOut());
+  try {
+    await signOut(authFirebase);
+    dispatch(authSignOut());
+
+    Toast.show("Logout successful", {
+      duration: 3000,
+      position: 50,
+    });
+  } catch (error) {
+    console.log("error", error);
+  }
 };
 
-export const authStateCahngeUser = () => async (dispatch, getState) => {
-  await auth.onAuthStateChanged((user) => {
+export const authStateChangeUser = () => async (dispatch, getState) => {
+  await onAuthStateChanged(authFirebase, (user) => {
     if (user) {
       const userUpdateProfile = {
-        nickName: user.displayName,
+        userName: user.displayName,
         userId: user.uid,
       };
 
