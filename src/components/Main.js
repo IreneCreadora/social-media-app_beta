@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { useRoute } from "../nav/router";
 
-import { authStateCahngeUser } from "../redux/auth/authOperations";
+import { authStateChangeUser } from "../redux/auth/authOperations";
 import { selectAuth } from "../redux/auth/authSelectors";
 
 export default function Main() {
